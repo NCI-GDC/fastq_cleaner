@@ -28,7 +28,7 @@ int run_pe(cxxopts::ParseResult result)
             std::istringstream buf(it->name);
             std::istream_iterator<std::string> beg(buf), end;
             std::vector<std::string> name_vector(beg, end);
-            std::cout << "name_vector.back(): " << tokens.back() << std::endl;
+            std::cout << "name_vector.back(): " << name_vector.back() << std::endl;
         }
     }
     return 0;
