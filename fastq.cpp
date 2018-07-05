@@ -14,13 +14,8 @@
 
 int run_pe(cxxopts::ParseResult result)
 {
-    std::cout << "run_pe: " << result["fastq"].as<std::string>() << std::endl;
-    std::ifstream fastq_file {result["fastq"].as<std::string>(), std::ios::binary};
-    std::cout << "string count: " << bioio::count_fastq_records(result["fastq"].as<std::string>()) << std::endl;
+    // std::ifstream fastq_file {result["fastq"].as<std::string>(), std::ios::binary};
     const auto sequence  = bioio::read_fastq(result["fastq"].as<std::string>());
-    std::cout << "typid(sequence): " << typeid(sequence).name() << std::endl;
-
-    std::cout << "sequence.size(): " << sequence.size() << std::endl;
 
     for (auto it = begin (sequence); it != end(sequence); ++it) {
         if (it->name.size() > 0) {
