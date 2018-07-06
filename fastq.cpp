@@ -1,16 +1,15 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstddef>
-#include <regex>
-#include <stdexcept>
-#include <algorithm>
-#include <tuple>
-#include <typeinfo>
+// #include <iostream>
+// #include <fstream>
+// #include <string>
+// #include <cstddef>
+// #include <stdexcept>
+// #include <algorithm>
+// #include <tuple>
+// #include <typeinfo>
 
 #include "bioio.hpp"
 #include "cxxopts.hpp"
-
+#include <boost/algorithm/string.hpp>
 
 int run_pe(cxxopts::ParseResult result)
 {
@@ -19,11 +18,17 @@ int run_pe(cxxopts::ParseResult result)
 
     for (auto it = begin (sequence); it != end(sequence); ++it) {
         if (it->name.size() > 0) {
-            std::cout << "it->name: " << it->name.size() << std::endl;
-            std::istringstream buf(it->name);
-            std::istream_iterator<std::string> beg(buf), end;
-            std::vector<std::string> name_vector(beg, end);
-            std::cout << "name_vector.back(): " << name_vector.back() << std::endl;
+            const std::string buf(it->name);
+            std::vector<std::string> name_vector;            
+            boost::split(name_vector, buf, [](char c){return c == ' ';});
+            
+            if (name_vector.size() == 2) {
+                std::vector<std::string> rfcs_vector;            
+                boost::split(rfcs_vector, name_vector.back(), [](char c){return c == ':';});
+                if ((std::string)rfcs_vector.at(1) == "Y") {
+                    continue;
+                }
+            }
         }
     }
     return 0;
@@ -41,11 +46,10 @@ int get_options_valid(cxxopts::ParseResult result)
         return false;
     }
     if (result.count("fastq2")) {
-        if (result.count("fastq2") != 1)
-            {
-                std::cerr << "--fastq2 option can only be specified once" << std::endl;
-                return false;
-            }
+        if (result.count("fastq2") != 1) {
+            std::cerr << "--fastq2 option can only be specified once" << std::endl;
+            return false;
+        }
     }
     return true;
 }
