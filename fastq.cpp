@@ -13,11 +13,15 @@
 
 int run_pe(cxxopts::ParseResult result)
 {
+    std::ofstream fastq_out;
+    fastq_out.open("example.fastq");
+    
     // std::ifstream fastq_file {result["fastq"].as<std::string>(), std::ios::binary};
     const auto sequence  = bioio::read_fastq(result["fastq"].as<std::string>());
 
     for (auto it = begin (sequence); it != end(sequence); ++it) {
         if (it->name.size() > 0) {
+            bool write_record = true;
             const std::string buf(it->name);
             std::vector<std::string> name_vector;            
             boost::split(name_vector, buf, [](char c){return c == ' ';});
@@ -26,11 +30,18 @@ int run_pe(cxxopts::ParseResult result)
                 std::vector<std::string> rfcs_vector;            
                 boost::split(rfcs_vector, name_vector.back(), [](char c){return c == ':';});
                 if ((std::string)rfcs_vector.at(1) == "Y") {
-                    continue;
+                    write_record = false;
                 }
+            }
+            if (write_record) {
+                fastq_out << it->name << '\n';
+                fastq_out << it->seq << '\n';
+                fastq_out << it->thirdline << '\n';
+                fastq_out << it->qual << '\n';
             }
         }
     }
+    fastq_out.close();
     return 0;
 }
 
