@@ -90,19 +90,21 @@ struct FastaRecord
 };
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string>
 struct FastqRecord
 {
     StringType name;
     SequenceType1 seq;
-    SequenceType2 qual;
+    SequenceType2 thirdline;
+    SequenceType3 qual;
     
     FastqRecord() = delete;
-    template <typename StringType_, typename SequenceType1_, typename SequenceType2_>
-    explicit FastqRecord(StringType_&& name, SequenceType1_&& seq, SequenceType2_&& qual)
+    template <typename StringType_, typename SequenceType1_, typename SequenceType2_, typename SequenceType3_>
+    explicit FastqRecord(StringType_&& name, SequenceType1_&& seq, SequenceType2_&& thirdline, SequenceType3_&& qual)
     :name {std::forward<StringType_>(name)}
     , seq {std::forward<SequenceType1_>(seq)}
-    , qual {std::forward<SequenceType2_>(qual)} 
+    , thirdline {std::forward<SequenceType2_>(thirdline)}
+    , qual {std::forward<SequenceType3_>(qual)} 
     {}
 };
 
@@ -113,15 +115,15 @@ template <typename StringType = std::string, typename SequenceType = std::string
 using FastaMap = std::unordered_map<StringType, SequenceType>;
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string>
-using FastqMap = std::unordered_map<StringType, std::pair<SequenceType1, SequenceType2>>;
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string>
+using FastqMap = std::unordered_map<StringType, SequenceType1, SequenceType2, SequenceType3>;
 
 template <typename StringType = std::string, typename SequenceType = std::string>
 using FastaReads = std::pair<ReadIds<StringType>, FastaMap<StringType, SequenceType>>;
 
-template <typename StringType = std::string, typename SequenceType = std::string,
-          typename SequenceType2 = std::string>
-using FastqReads = std::pair<ReadIds<StringType>, FastqMap<StringType, SequenceType, SequenceType2>>;
+template <typename StringType = std::string, typename SequenceType1 = std::string,
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string>
+using FastqReads = std::pair<ReadIds<StringType>, FastqMap<StringType, SequenceType1, SequenceType2, SequenceType3>>;
 
 namespace detail
 {
@@ -180,22 +182,23 @@ namespace detail
     }
     
     template <typename StringType = std::string, typename SequenceType1 = std::string,
-              typename SequenceType2 = std::string>
-    ::bioio::FastqRecord<StringType, SequenceType1, SequenceType2>
+              typename SequenceType2 = std::string, typename SequenceType3 = std::string>
+    ::bioio::FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>
     read_fastq_record(std::istream& fastq)
     {
         StringType name;
         SequenceType1 seq;
-        SequenceType2 quals;
+        SequenceType2 thirdline;
+        SequenceType3 quals;
         
         // Unlike FASTA, FASTQ always use one line per field.
         std::getline(fastq, name);
         std::getline(fastq, seq);
-        fastq.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::getline(fastq, thirdline);
         std::getline(fastq, quals);
         
-        return ::bioio::FastqRecord<StringType, SequenceType1, SequenceType2> 
-                {std::move(name), std::move(seq), std::move(quals)};
+        return ::bioio::FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3> 
+            {std::move(name), std::move(seq), std::move(thirdline), std::move(quals)};
     }
 } // namespace detail
 
@@ -670,59 +673,59 @@ read_fastq_seqs(const std::string& path)
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string, typename F>
-std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string, typename F>
+std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>>
 read_fastq(std::istream& fastq, std::size_t num_records, F f)
 {
-    std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>> result {};
+    std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>> result {};
     result.reserve(num_records);
     for (; num_records > 0; --num_records) {
-        auto record = detail::read_fastq_record<StringType, SequenceType1, SequenceType2>(fastq);
-        result.emplace_back(f(std::move(record.name)), std::move(record.seq), std::move(record.qual));
+        auto record = detail::read_fastq_record<StringType, SequenceType1, SequenceType2, SequenceType3>(fastq);
+        result.emplace_back(f(std::move(record.name)), std::move(record.seq), std::move(record.thirdline), std::move(record.qual));
     }
     return result;
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string, typename F>
-std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string,  typename F>
+std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>>
 read_fastq(std::istream& fastq, F f)
 {
-    return read_fastq<StringType, SequenceType1, SequenceType2, F>(fastq, count_fastq_records(fastq), f);
+    return read_fastq<StringType, SequenceType1, SequenceType2, SequenceType3, F>(fastq, count_fastq_records(fastq), f);
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string, typename F>
-std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string, typename F>
+std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>>
 read_fastq(const std::string& path, const std::size_t num_records, F f)
 {
     std::ifstream fastq {path, std::ios::binary};
-    return read_fastq<StringType, SequenceType1, SequenceType2, F>(fastq, num_records, f);
+    return read_fastq<StringType, SequenceType1, SequenceType2, SequenceType3, F>(fastq, num_records, f);
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string, typename F>
-std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>>
+          typename SequenceType2 = std::string, typename SequenceType3, typename F>
+std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>>
 read_fastq(const std::string& path, F f)
 {
     std::ifstream fastq {path, std::ios::binary};
-    return read_fastq<StringType, SequenceType1, SequenceType2, F>(fastq, f);
+    return read_fastq<StringType, SequenceType1, SequenceType2, SequenceType3, F>(fastq, f);
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string>
-std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string>
+std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>>
 read_fastq(const std::string& path)
 {
-    return read_fastq<StringType, SequenceType1, SequenceType2>(path, [] (const StringType& name) { return name; });
+    return read_fastq<StringType, SequenceType1, SequenceType2, SequenceType3>(path, [] (const StringType& name) { return name; });
 }    
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string>
-std::vector<FastqRecord<StringType, SequenceType1, SequenceType2>>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string>
+std::vector<FastqRecord<StringType, SequenceType1, SequenceType2, SequenceType3>>
 read_fastq(std::istream& fastq)
 {
-    return read_fastq<StringType, SequenceType1, SequenceType2>(fastq, [] (const StringType& name) { return name; });
+    return read_fastq<StringType, SequenceType1, SequenceType2, SequenceType3>(fastq, [] (const StringType& name) { return name; });
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
@@ -747,18 +750,18 @@ read_fastq(const std::string& path, const std::size_t num_records)
 }
 
 template <typename StringType = std::string, typename SequenceType1 = std::string,
-          typename SequenceType2 = std::string>
-FastqReads<StringType, SequenceType1, SequenceType2>
+          typename SequenceType2 = std::string, typename SequenceType3 = std::string>
+FastqReads<StringType, SequenceType1, SequenceType2, SequenceType3>
 read_fastq_map(const std::string& path)
 {
     std::ifstream fastq {path, std::ios::binary};
     auto num_records = count_fastq_records(fastq);
     ReadIds<StringType> names {};
-    FastqMap<StringType, SequenceType1, SequenceType2> data {};
+    FastqMap<StringType, SequenceType1, SequenceType2, SequenceType3> data {};
     data.reserve(num_records);
     for (; num_records > 0; --num_records) {
-        auto record = detail::read_fastq_record<StringType, SequenceType1, SequenceType2>(fastq);
-        data.emplace(record.name, {std::move(record.seq), std::move(record.qual)});
+        auto record = detail::read_fastq_record<StringType, SequenceType1, SequenceType2, SequenceType3>(fastq);
+        data.emplace(record.name, {std::move(record.seq), std::move(record.thirdline), std::move(record.qual)});
         names.insert(std::move(record.name));
     }
     return {names, data};
