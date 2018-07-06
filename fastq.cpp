@@ -10,6 +10,7 @@
 #include "bioio.hpp"
 #include "cxxopts.hpp"
 #include <boost/algorithm/string.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 
 int run_pe(cxxopts::ParseResult result)
 {
@@ -22,9 +23,8 @@ int run_pe(cxxopts::ParseResult result)
     for (auto it = begin (sequence); it != end(sequence); ++it) {
         if (it->name.size() > 0) {
             bool write_record = true;
-            const std::string buf(it->name);
             std::vector<std::string> name_vector;            
-            boost::split(name_vector, buf, [](char c){return c == ' ';});
+            boost::split(name_vector, it->name, [](char c){return c == ' ';});
             
             if (name_vector.size() == 2) {
                 std::vector<std::string> rfcs_vector;            
@@ -34,10 +34,10 @@ int run_pe(cxxopts::ParseResult result)
                 }
             }
             if (write_record) {
-                fastq_out << it->name << '\n';
-                fastq_out << it->seq << '\n';
-                fastq_out << it->thirdline << '\n';
-                fastq_out << it->qual << '\n';
+                fastq_out << it->name << '\n'
+                          << it->seq << '\n'
+                          << it->thirdline << '\n'
+                          << it->qual << '\n';
             }
         }
     }
