@@ -57,33 +57,35 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
     path cwd = current_path();
 
     // fastq
-    path fastq_path = absolute(result["fastq"].as<std::string>());
-    if (fastq_path.parent_path() == cwd) {
+    bool fastq_exists = exists(result["fastq"].as<std::string>());
+    if (!fastq_exists) {
+        std::cerr << "input fastq does not exist at specified path:\n\t"
+                  << result["fastq"].as<std::string>() << std::endl;
+        return false;
+    }
+
+    path fastq_path = system_complete(result["fastq"].as<std::string>());
+    if (equivalent(fastq_path.parent_path(), cwd)) {
         std::cerr << "input fastq should not be located in cwd\n"
                   << "\tcwd: " << cwd
                   << "\n\tfastq absolute path: " << fastq_path << std::endl;
         return false;
     }
-    bool fastq_exists = exists(fastq_path);
-    if (!fastq_exists) {
-        std::cerr << "input fastq does not exist at specified path:\n\t"
-                  << fastq_path << std::endl;
-        return false;
-    }
 
     // fastq2
     if (result.count("fastq2")) {
-        path fastq2_path = absolute(result["fastq"].as<std::string>());
-        if (fastq2_path.parent_path() == cwd) {
+        bool fastq2_exists = exists(result["fastq2"].as<std::string>());
+        if (!fastq2_exists) {
+            std::cerr << "input fastq2 does not exist at specified path:\n\t"
+                      << result["fastq2"].as<std::string>() << std::endl;
+            return false;
+        }
+
+        path fastq2_path = system_complete(result["fastq2"].as<std::string>());
+        if (equivalent(fastq2_path.parent_path(), cwd)) {
             std::cerr << "input fastq2 should not be located in cwd\n"
                       << "\tcwd: " << cwd
                       << "\n\tfastq2 absolute path: " << fastq2_path << std::endl;
-            return false;
-        }
-        bool fastq2_exists = exists(fastq2_path);
-        if (!fastq2_exists) {
-            std::cerr << "input fastq2 does not exist at specified path:\n\t"
-                      << fastq2_path << std::endl;
             return false;
         }
     }
