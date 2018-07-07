@@ -26,7 +26,7 @@ int run_se(cxxopts::ParseResult result)
     // std::ifstream fastq_file {result["fastq"].as<std::string>(), std::ios::binary};
     const auto sequence  = bioio::read_fastq(result["fastq"].as<std::string>());
 
-    for (auto it = begin (sequence); it != end(sequence); ++it) {
+    for (auto it = begin(sequence); it != end(sequence); ++it) {
         if (it->name.size() > 0) {
             bool write_record = true;
             std::vector<std::string> name_vector;            
@@ -51,6 +51,45 @@ int run_se(cxxopts::ParseResult result)
     return 0;
 }
 
+bool get_input_paths_valid(cxxopts::ParseResult result)
+{
+    using namespace boost::filesystem;
+    path fastq_path = absolute(result["fastq"].as<std::string>());
+    path cwd = current_path();
+    if (fastq_path.parent_path() == cwd) {
+        std::cerr << "input fastq should not be located in cwd\n"
+                  << "\tcwd: " << cwd
+                  << "\n\tfastq absolute path: " << fastq_path << std::endl;
+        return false;
+    }
+    if (result.count("fastq2")) {
+        path fastq2_path = absolute(result["fastq"].as<std::string>());
+        if (fastq2_path.parent_path() == cwd) {
+            std::cerr << "input fastq2 should not be located in cwd\n"
+                      << "\tcwd: " << cwd
+                      << "\n\tfastq2 absolute path: " << fastq2_path << std::endl;
+            return false;
+        }
+    }
+
+    bool fastq_exists = exists(fastq_path);
+    if (!fastq_exists) {
+        std::cerr << "input fastq does not exist at specified path:\n\t"
+                  << fastq_path << std::endl;
+        return false
+    }
+
+    if (result.count("fastq2")) {
+        bool fastq2_exists = exists(fastq2_path);
+        if (!fastq2_exists) {
+            std::cerr << "input fastq2 does not exist at specified path:\n\t"
+                      << fastq2_path << std::endl;
+            return false
+        }
+    }
+    return true;
+}
+
 int get_options_valid(cxxopts::ParseResult result)
 {
     if (result.count("fastq") != 1) {
@@ -62,6 +101,10 @@ int get_options_valid(cxxopts::ParseResult result)
             std::cerr << "--fastq2 option can only be specified once" << std::endl;
             return false;
         }
+    }
+    bool input_paths_valid = get_input_paths_valid(result);
+    if (!input_paths_valid) {
+        return false;
     }
     return true;
 }
