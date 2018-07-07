@@ -54,14 +54,24 @@ int run_se(cxxopts::ParseResult result)
 bool get_input_paths_valid(cxxopts::ParseResult result)
 {
     using namespace boost::filesystem;
-    path fastq_path = absolute(result["fastq"].as<std::string>());
     path cwd = current_path();
+
+    // fastq
+    path fastq_path = absolute(result["fastq"].as<std::string>());
     if (fastq_path.parent_path() == cwd) {
         std::cerr << "input fastq should not be located in cwd\n"
                   << "\tcwd: " << cwd
                   << "\n\tfastq absolute path: " << fastq_path << std::endl;
         return false;
     }
+    bool fastq_exists = exists(fastq_path);
+    if (!fastq_exists) {
+        std::cerr << "input fastq does not exist at specified path:\n\t"
+                  << fastq_path << std::endl;
+        return false;
+    }
+
+    // fastq2
     if (result.count("fastq2")) {
         path fastq2_path = absolute(result["fastq"].as<std::string>());
         if (fastq2_path.parent_path() == cwd) {
@@ -70,16 +80,6 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
                       << "\n\tfastq2 absolute path: " << fastq2_path << std::endl;
             return false;
         }
-    }
-
-    bool fastq_exists = exists(fastq_path);
-    if (!fastq_exists) {
-        std::cerr << "input fastq does not exist at specified path:\n\t"
-                  << fastq_path << std::endl;
-        return false;
-    }
-
-    if (result.count("fastq2")) {
         bool fastq2_exists = exists(fastq2_path);
         if (!fastq2_exists) {
             std::cerr << "input fastq2 does not exist at specified path:\n\t"
