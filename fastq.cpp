@@ -76,7 +76,7 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
     if (!fastq_exists) {
         std::cerr << "input fastq does not exist at specified path:\n\t"
                   << fastq_path << std::endl;
-        return false
+        return false;
     }
 
     if (result.count("fastq2")) {
@@ -84,7 +84,7 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
         if (!fastq2_exists) {
             std::cerr << "input fastq2 does not exist at specified path:\n\t"
                       << fastq2_path << std::endl;
-            return false
+            return false;
         }
     }
     return true;
