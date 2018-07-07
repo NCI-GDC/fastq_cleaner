@@ -20,8 +20,11 @@ int run_pe(cxxopts::ParseResult result)
 
 int run_se(cxxopts::ParseResult result)
 {
+    using namespace boost::filesystem;
     std::ofstream fastq_out;
-    fastq_out.open("example.fastq");
+    boost::filesystem::path fastq_path = boost::filesystem::canonical(result["fastq"].as<std::string>());
+    boost::filesystem::path fastq_filename = fastq_path.filename();
+    fastq_out.open(fastq_filename.string());
     
     // std::ifstream fastq_file {result["fastq"].as<std::string>(), std::ios::binary};
     const auto sequence  = bioio::read_fastq(result["fastq"].as<std::string>());
