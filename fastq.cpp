@@ -1,4 +1,4 @@
-// #include <iostream>
+#include <iostream>
 // #include <fstream>
 // #include <string>
 // #include <cstddef>
@@ -10,9 +10,15 @@
 #include "bioio.hpp"
 #include "cxxopts.hpp"
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 
 int run_pe(cxxopts::ParseResult result)
+{
+    return 0;
+}
+
+int run_se(cxxopts::ParseResult result)
 {
     std::ofstream fastq_out;
     fastq_out.open("example.fastq");
@@ -42,11 +48,6 @@ int run_pe(cxxopts::ParseResult result)
         }
     }
     fastq_out.close();
-    return 0;
-}
-
-int run_se(cxxopts::ParseResult result)
-{
     return 0;
 }
 
