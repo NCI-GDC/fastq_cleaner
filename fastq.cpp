@@ -56,7 +56,6 @@ int run_se(cxxopts::ParseResult result)
         fastq_out.open(fastq_filename.string(), std::ios_base::out | std::ios_base::binary);
         out.push(boost::iostreams::zlib_compressor());
     } else {
-        std::cout << "else" << std::endl;
         fastq_in.open(result["fastq"].as<std::string>(), std::ios_base::in);
 
         fastq_out.open(fastq_filename.string(), std::ios_base::out);
@@ -73,9 +72,7 @@ int run_se(cxxopts::ParseResult result)
     std::string line4;
 
     std::getline(in_stream, line1);
-    int i = 1;
     while(in_stream.good()) {
-        std::cout << i << std::endl;
         std::getline(in_stream, line2);
         std::getline(in_stream, line3);
         std::getline(in_stream, line4);
@@ -98,7 +95,6 @@ int run_se(cxxopts::ParseResult result)
                        << line4+'\n';
         }
         std::getline(in_stream, line1);
-        i++;
     }
     boost::iostreams::close(in);
     fastq_in.close();
