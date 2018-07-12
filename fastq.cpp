@@ -206,7 +206,7 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
     return true;
 }
 
-int get_options_valid(cxxopts::ParseResult result)
+bool get_options_valid(cxxopts::ParseResult result)
 {
     if (result.count("fastq") != 1) {
         std::cerr << "--fastq option must be specified once" << std::endl;
