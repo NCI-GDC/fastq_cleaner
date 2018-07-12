@@ -12,7 +12,6 @@
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
-// #include <boost/iostreams/filter/lzma.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 
 std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::string fastq)
@@ -142,7 +141,7 @@ int run_pe(cxxopts::ParseResult result)
 
     worker1_thread.join();
     worker2_thread.join();
-    std::cout << "read input fastq pair" << std::endl;
+    std::cout << "finished reading input fastq pair" << std::endl;
 
     std::set<int> filtered_set;
     std::set_union(pair1.first.begin(), pair1.first.end(), pair2.first.begin(), pair2.first.end(), std::inserter(filtered_set, filtered_set.begin()));
