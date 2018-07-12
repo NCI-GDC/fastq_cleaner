@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iterator>
 #include <fstream>
+#include <future>
 #include <set>
 #include <thread>
 
@@ -124,15 +125,32 @@ void write_fastq(std::vector<std::string> fastq_vector, std::set<int> filtered_s
 
 int run_pe(cxxopts::ParseResult result)
 {
-    std::string fastq_string = result["fastq"].as<std::string>();
+    std::string fastq1_string = result["fastq"].as<std::string>();
     std::string fastq2_string = result["fastq2"].as<std::string>();
-    std::pair<std::set<int>, std::vector<std::string>> pair1 = get_fastq_pair(fastq_string);
-    std::pair<std::set<int>, std::vector<std::string>> pair2 = get_fastq_pair(fastq2_string);
+
+    std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq1_pair(get_fastq_pair);
+    std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
+
+    std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq2_pair(get_fastq_pair);
+    std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq2_pair = task_get_fastq2_pair.get_future();
+
+    std::thread worker1_thread(std::move(task_get_fastq1_pair), fastq1_string);
+    std::thread worker2_thread(std::move(task_get_fastq2_pair), fastq2_string);
+
+    std::pair<std::set<int>, std::vector<std::string>> pair1 = fut_fastq1_pair.get();
+    std::pair<std::set<int>, std::vector<std::string>> pair2 = fut_fastq2_pair.get();
+
+    worker1_thread.join();
+    worker2_thread.join();
+
     std::set<int> filtered_set;
     std::set_union(pair1.first.begin(), pair1.first.end(), pair2.first.begin(), pair2.first.end(), std::inserter(filtered_set, filtered_set.begin()));
 
-    write_fastq(pair1.second, filtered_set, fastq_string);
-    write_fastq(pair2.second, filtered_set, fastq2_string);
+    std::thread write_fastq1(write_fastq, pair1.second, filtered_set, fastq1_string);
+    std::thread write_fastq2(write_fastq, pair2.second, filtered_set, fastq2_string);
+
+    write_fastq1.join();
+    write_fastq2.join();
     return 0;
 }
 
