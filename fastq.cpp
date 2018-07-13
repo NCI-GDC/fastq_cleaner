@@ -139,6 +139,7 @@ int run_pe(cxxopts::ParseResult result)
     std::pair<std::set<int>, std::vector<std::string>> pair1 = fut_fastq1_pair.get();
     std::pair<std::set<int>, std::vector<std::string>> pair2 = fut_fastq2_pair.get();
 
+    std::cout << "begin reading input fastq pair" << std::endl;
     worker1_thread.join();
     worker2_thread.join();
     std::cout << "finished reading input fastq pair" << std::endl;
