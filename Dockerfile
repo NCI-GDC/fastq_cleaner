@@ -3,7 +3,7 @@ FROM fedora:28
 MAINTAINER Jeremiah H. Savage <jeremiahsavage@gmail.com>
 
 RUN dnf update --refresh --best --allowerasing -y \
-    && dnf --assumeyes install
+    && dnf --assumeyes install \
        boost \
        boost-devel \
        gcc-c++ \
