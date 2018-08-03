@@ -8,6 +8,7 @@ RUN dnf update --refresh --best --allowerasing -y \
        boost-devel \
        gcc-c++ \
        git \
+       make \
     && git clone https://github.com/NCI-GDC/fastq_cleaner.git \
     && cd fastq_cleaner/ \
     && make \
