@@ -27,7 +27,6 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
     std::getline(in_stream, line1);
     unsigned long long int read_count = 0;
     while(in_stream.good() && read_count < reads_in_memory) {
-        std::cout << "\t read_count: " << read_count << std::endl;
         std::getline(in_stream, line2);
         std::getline(in_stream, line3);
         std::getline(in_stream, line4);
