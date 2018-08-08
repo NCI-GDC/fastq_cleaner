@@ -237,18 +237,21 @@ int run_pe(cxxopts::ParseResult result)
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
         loop_count++;
-        std::pair<std::set<int>, std::vector<std::string>> pair1 = get_fastq_pair(in_stream1, result["reads_in_memory"].as<unsigned long long int>());
-        std::pair<std::set<int>, std::vector<std::string>> pair2 = get_fastq_pair(in_stream2, result["reads_in_memory"].as<unsigned long long int>());
+
+        // std::pair<std::set<int>, std::vector<std::string>> pair1 = get_fastq_pair(in_stream1, result["reads_in_memory"].as<unsigned long long int>());
+        // std::pair<std::set<int>, std::vector<std::string>> pair2 = get_fastq_pair(in_stream2, result["reads_in_memory"].as<unsigned long long int>());
+
         // //std::istream in_stream1 = get_istream_fastq(fastq1_string);
         // //std::istream in_stream2 = get_istream_fastq(fastq2_string);
-        // std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq1_pair(get_fastq_pair);
+
+        std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq1_pair(get_fastq_pair);
         // std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
 
         // std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq2_pair(get_fastq_pair);
         // std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq2_pair = task_get_fastq2_pair.get_future();
 
-        // std::thread worker1_thread(std::move(task_get_fastq1_pair), in_stream1, result["reads_in_memory"]);
-        // std::thread worker2_thread(std::move(task_get_fastq2_pair), in_stream2, result["reads_in_memory"]);
+        // std::thread worker1_thread(std::move(task_get_fastq1_pair), in_stream1, result["reads_in_memory"].as<unsigned long long int>());
+        // std::thread worker2_thread(std::move(task_get_fastq2_pair), in_stream2, result["reads_in_memory"].as<unsigned long long int>());
 
         // std::pair<std::set<int>, std::vector<std::string>> pair1 = fut_fastq1_pair.get();
         // std::pair<std::set<int>, std::vector<std::string>> pair2 = fut_fastq2_pair.get();
@@ -258,20 +261,20 @@ int run_pe(cxxopts::ParseResult result)
         // worker2_thread.join();
         // std::cout << "finished reading input fastq pair" << std::endl;
 
-        std::set<int> filtered_set;
-        std::set_union(pair1.first.begin(), pair1.first.end(), pair2.first.begin(), pair2.first.end(), std::inserter(filtered_set, filtered_set.begin()));
-        std::cout << "created filter set" << std::endl;
+        // std::set<int> filtered_set;
+        // std::set_union(pair1.first.begin(), pair1.first.end(), pair2.first.begin(), pair2.first.end(), std::inserter(filtered_set, filtered_set.begin()));
+        // std::cout << "created filter set" << std::endl;
 
-        write_fastq(pair1.second, filtered_set, out1_stream);
-        write_fastq(pair2.second, filtered_set, out2_stream);
+        // write_fastq(pair1.second, filtered_set, out1_stream);
+        // write_fastq(pair2.second, filtered_set, out2_stream);
         // std::thread write_fastq1(write_fastq, pair1.second, filtered_set, fastq1_string);
         // std::thread write_fastq2(write_fastq, pair2.second, filtered_set, fastq2_string);
-        std::cout << "pair1.second.size(): " << pair1.second.size() << std::endl;
-        std::cout << "result[\"reads_in_memory\"].as<unsigned long long int>(): " << result["reads_in_memory"].as<unsigned long long int>() << std::endl;
-        if (pair1.second.size() != result["reads_in_memory"].as<unsigned long long int>()) {
-            std::cout << "break condition" << std::endl;
-            break;
-        }
+        // std::cout << "pair1.second.size(): " << pair1.second.size() << std::endl;
+        // std::cout << "result[\"reads_in_memory\"].as<unsigned long long int>(): " << result["reads_in_memory"].as<unsigned long long int>() << std::endl;
+        // if (pair1.second.size() != result["reads_in_memory"].as<unsigned long long int>()) {
+        //     std::cout << "break condition" << std::endl;
+        //     break;
+        // }
     }
     // write_fastq1.join();
     // write_fastq2.join();
