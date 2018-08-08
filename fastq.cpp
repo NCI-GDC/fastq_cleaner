@@ -25,8 +25,8 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
     std::string line4;
 
     std::getline(in_stream, line1);
-    unsigned long long int read_count = 0;
-    while(in_stream.good() && read_count < reads_in_memory) {
+    unsigned long long int read_count = 1;
+    while(in_stream.good()) {
         std::getline(in_stream, line2);
         std::getline(in_stream, line3);
         std::getline(in_stream, line4);
@@ -46,6 +46,12 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
                                line2+'\n'+
                                line3+'\n'+
                                line4+'\n');
+        if (read_count == reads_in_memory) {
+            std::cout << "\t while() read_count == reads_in_memory" << std::endl;
+            std::cout << "\t while() read_count == " << read_count << std::endl;
+            std::cout << "\t while() reads_in_memory == " << reads_in_memory << std::endl;
+            break;
+        }
         std::getline(in_stream, line1);
         read_count++;
     }
@@ -70,7 +76,7 @@ void write_fastq(std::vector<std::string> fastq_vector, std::set<int> filtered_s
         }
         current_index++;
     }
-    // out_stream.flush();
+    out_stream.flush();
     return;
 }
 
