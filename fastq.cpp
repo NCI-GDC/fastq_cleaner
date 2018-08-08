@@ -26,7 +26,8 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
 
     std::getline(in_stream, line1);
     unsigned long long int read_count = 0;
-    while(in_stream.good() && read_count <= reads_in_memory) {
+    while(in_stream.good() && read_count < reads_in_memory) {
+        std::cout << "\t read_count: " << read_count << std::endl;
         std::getline(in_stream, line2);
         std::getline(in_stream, line3);
         std::getline(in_stream, line4);
@@ -49,6 +50,7 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
         std::getline(in_stream, line1);
         read_count++;
     }
+    std::cout << "\tfastq_vector.size(): " << fastq_vector.size() << std::endl;
     std::pair<std::set<int>, std::vector<std::string>> pair = {filtered_set, fastq_vector};
     return pair;
 }
@@ -225,8 +227,11 @@ int run_pe(cxxopts::ParseResult result)
     }
     out2.push(fastq2_out);
     std::ostream out2_stream(&out2);
-    
+
+    int loop_count = 1;
     while(true) {
+        std::cout << "loop: " << loop_count << std::endl;
+        loop_count++;
         std::pair<std::set<int>, std::vector<std::string>> pair1 = get_fastq_pair(in_stream1, result["reads_in_memory"].as<unsigned long long int>());
         std::pair<std::set<int>, std::vector<std::string>> pair2 = get_fastq_pair(in_stream2, result["reads_in_memory"].as<unsigned long long int>());
     // //std::istream in_stream1 = get_istream_fastq(fastq1_string);
@@ -256,7 +261,10 @@ int run_pe(cxxopts::ParseResult result)
         write_fastq(pair2.second, filtered_set, out2_stream);
     // std::thread write_fastq1(write_fastq, pair1.second, filtered_set, fastq1_string);
     // std::thread write_fastq2(write_fastq, pair2.second, filtered_set, fastq2_string);
-        if (pair1.first.size() != result["reads_in_memory"].as<unsigned long long int>()) {
+        std::cout << "pair1.second.size(): " << pair1.second.size() << std::endl;
+        std::cout << "result[\"reads_in_memory\"].as<unsigned long long int>(): " << result["reads_in_memory"].as<unsigned long long int>() << std::endl;
+        if (pair1.second.size() != result["reads_in_memory"].as<unsigned long long int>()) {
+            std::cout << "break condition" << std::endl;
             break;
         }
     }
