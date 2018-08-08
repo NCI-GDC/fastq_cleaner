@@ -244,7 +244,7 @@ int run_pe(cxxopts::ParseResult result)
         // //std::istream in_stream1 = get_istream_fastq(fastq1_string);
         // //std::istream in_stream2 = get_istream_fastq(fastq2_string);
 
-        std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq1_pair(get_fastq_pair);
+        std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::istream&, unsigned long long int) > task_get_fastq1_pair(get_fastq_pair);
         // std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
 
         // std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq2_pair(get_fastq_pair);
