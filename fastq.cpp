@@ -344,7 +344,6 @@ int run_se(cxxopts::ParseResult result)
         std::cout << "begin reading input fastq singleton" << std::endl;
         worker1_thread.join();
         std::cout << "finished reading input fastq singleton" << std::endl;
-        
 
         std::set<int> filtered_set = pair1.first;
         std::thread write_fastq1(std::move(write_fastq), pair1.second, filtered_set, std::ref(out1_stream));
@@ -355,6 +354,13 @@ int run_se(cxxopts::ParseResult result)
             break;
         }
     }
+    
+    boost::iostreams::close(in1);
+    out1_stream.flush();
+    boost::iostreams::close(out1);
+    
+    std::cout << "wrote output fastq singleton" << std::endl;
+
     return 0;
 }
 
