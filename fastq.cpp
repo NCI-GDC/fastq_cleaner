@@ -237,10 +237,10 @@ int run_pe(cxxopts::ParseResult result)
     unsigned long long int kept_read_pairs = 0;
     unsigned long long int total_read_pairs = 0;
     int loop_count = 1;
+    unsigned long long int reads_in_memory = result["reads_in_memory"].as<unsigned long long int>();
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
         loop_count++;
-        unsigned long long int reads_in_memory = result["reads_in_memory"].as<unsigned long long int>();
 
         std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::istream&, unsigned long long int) > task_get_fastq1_pair(get_fastq_pair);
         std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::istream&, unsigned long long int) > task_get_fastq2_pair(get_fastq_pair);
@@ -351,10 +351,10 @@ int run_se(cxxopts::ParseResult result)
     unsigned long long int kept_read_singletons = 0;
     unsigned long long int total_read_singletons = 0;
     int loop_count = 1;
+    unsigned long long int reads_in_memory = result["reads_in_memory"].as<unsigned long long int>();
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
         loop_count++;
-        unsigned long long int reads_in_memory = result["reads_in_memory"].as<unsigned long long int>();
 
         std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::istream&, unsigned long long int) > task_get_fastq1_pair(get_fastq_pair);
         std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
