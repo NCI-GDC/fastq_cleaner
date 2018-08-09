@@ -245,13 +245,13 @@ int run_pe(cxxopts::ParseResult result)
         // //std::istream in_stream2 = get_istream_fastq(fastq2_string);
 
         std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::istream&, unsigned long long int) > task_get_fastq1_pair(get_fastq_pair);
-        // std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
+        std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
 
-        // std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::string) > task_get_fastq2_pair(get_fastq_pair);
-        // std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq2_pair = task_get_fastq2_pair.get_future();
+        std::packaged_task< std::pair<std::set<int>, std::vector<std::string>>(std::istream&, unsigned long long int) > task_get_fastq2_pair(get_fastq_pair);
+        std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq2_pair = task_get_fastq2_pair.get_future();
 
-        // std::thread worker1_thread(std::move(task_get_fastq1_pair), in_stream1, result["reads_in_memory"].as<unsigned long long int>());
-        // std::thread worker2_thread(std::move(task_get_fastq2_pair), in_stream2, result["reads_in_memory"].as<unsigned long long int>());
+        std::thread worker1_thread(std::move(task_get_fastq1_pair), in_stream1, result["reads_in_memory"].as<unsigned long long int>());
+        //std::thread worker2_thread(std::move(task_get_fastq2_pair), in_stream2, result["reads_in_memory"].as<unsigned long long int>());
 
         // std::pair<std::set<int>, std::vector<std::string>> pair1 = fut_fastq1_pair.get();
         // std::pair<std::set<int>, std::vector<std::string>> pair2 = fut_fastq2_pair.get();
