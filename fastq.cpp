@@ -233,6 +233,9 @@ int run_pe(cxxopts::ParseResult result)
     out2.push(fastq2_out);
     std::ostream out2_stream(&out2);
 
+    unsigned long long int removed_read_pairs = 0;
+    unsigned long long int kept_read_pairs = 0;
+    unsigned long long int total_read_pairs = 0;
     int loop_count = 1;
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
@@ -264,12 +267,15 @@ int run_pe(cxxopts::ParseResult result)
         write_fastq1.join();
         write_fastq2.join();
 
+        removed_read_pairs += filtered_set.size();
+        kept_read_pairs += pair1.second.size() - filtered_set.size();
+        total_read_pairs += pair1.second.size();
         if (pair1.second.size() != reads_in_memory) {
             std::cout << "reached end of file" << std::endl;
             break;
         }
     }
-    
+
     boost::iostreams::close(in1);
     boost::iostreams::close(in2);
     out1_stream.flush();
@@ -278,6 +284,17 @@ int run_pe(cxxopts::ParseResult result)
     boost::iostreams::close(out2);
 
     std::cout << "wrote output fastq pair" << std::endl;
+
+    std::string json_filename = "result.json";
+    std::filebuf fb;
+    fb.open(json_filename, std::ios::out);
+    std::ostream out_json(&fb);
+    out_json << "{\n"
+             << "\t\"removed_read_pairs\": " << removed_read_pairs << ",\n"
+             << "\t\"kept_read_pairs\": " << kept_read_pairs << ",\n"
+             << "\t\"total_read_pairs\": " << total_read_pairs << "\n"
+             << "}";
+    fb.close();
     return 0;
 }
 
@@ -330,6 +347,9 @@ int run_se(cxxopts::ParseResult result)
     out1.push(fastq1_out);
     std::ostream out1_stream(&out1);
 
+    unsigned long long int removed_read_singletons = 0;
+    unsigned long long int kept_read_singletons = 0;
+    unsigned long long int total_read_singletons = 0;
     int loop_count = 1;
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
@@ -349,6 +369,9 @@ int run_se(cxxopts::ParseResult result)
         std::thread write_fastq1(std::move(write_fastq), pair1.second, filtered_set, std::ref(out1_stream));
         write_fastq1.join();
 
+        removed_read_singletons += filtered_set.size();
+        kept_read_singletons += pair1.second.size() - filtered_set.size();
+        total_read_singletons += pair1.second.size();
         if (pair1.second.size() != reads_in_memory) {
             std::cout << "reached end of file" << std::endl;
             break;
@@ -360,6 +383,17 @@ int run_se(cxxopts::ParseResult result)
     boost::iostreams::close(out1);
     
     std::cout << "wrote output fastq singleton" << std::endl;
+
+    std::string json_filename = "result.json";
+    std::filebuf fb;
+    fb.open(json_filename, std::ios::out);
+    std::ostream out_json(&fb);
+    out_json << "{\n"
+             << "\t\"removed_read_singletons\": " << removed_read_singletons << ",\n"
+             << "\t\"kept_read_singletons\": " << kept_read_singletons << ",\n"
+             << "\t\"total_read_singletons\": " << total_read_singletons << "\n"
+             << "}";
+    fb.close();
 
     return 0;
 }
