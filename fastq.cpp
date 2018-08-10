@@ -294,7 +294,9 @@ int run_pe(cxxopts::ParseResult result)
              << "\t\"kept_read_pairs\": " << kept_read_pairs << ",\n"
              << "\t\"total_read_pairs\": " << total_read_pairs << "\n"
              << "}";
+    out_json.flush();
     fb.close();
+
     return 0;
 }
 
@@ -393,6 +395,7 @@ int run_se(cxxopts::ParseResult result)
              << "\t\"kept_read_singletons\": " << kept_read_singletons << ",\n"
              << "\t\"total_read_singletons\": " << total_read_singletons << "\n"
              << "}";
+    out_json.flush();
     fb.close();
 
     return 0;
