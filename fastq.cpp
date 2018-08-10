@@ -31,7 +31,6 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
         std::getline(in_stream, line3);
         std::getline(in_stream, line4);
 
-        bool write_record = true;
         std::vector<std::string> name_vector;            
         boost::split(name_vector, line1, [](char c){return c == ' ';});
 
