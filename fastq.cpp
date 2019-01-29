@@ -79,62 +79,6 @@ void write_fastq(std::vector<std::string> fastq_vector, std::set<int> filtered_s
     return;
 }
 
-// std::istream& get_ostream_fastgq(std::string fastq)
-// {
-//     boost::filesystem::path fastq_path = boost::filesystem::canonical(fastq);
-//     boost::filesystem::path fastq_filename = fastq_path.filename();
-//     std::string fastq_extention = boost::filesystem::extension(fastq_filename.string());
-
-//     std::ofstream fastq_out;
-//     boost::iostreams::filtering_streambuf<boost::iostreams::output> out;
-
-//     if (fastq_extention == ".gz") {
-//         fastq_out.open(fastq_filename.string(), std::ios_base::out | std::ios_base::binary);
-//         out.push(boost::iostreams::gzip_compressor());
-//     }
-//     else if (fastq_extention == ".bz2") {
-//         fastq_out.open(fastq_filename.string(), std::ios_base::out | std::ios_base::binary);
-//         out.push(boost::iostreams::bzip2_compressor());
-//     }
-//     else if (fastq_extention == ".z" || fastq_extention == ".Z") {
-//         fastq_out.open(fastq_filename.string(), std::ios_base::out | std::ios_base::binary);
-//         out.push(boost::iostreams::zlib_compressor());
-//     } else {
-//         fastq_out.open(fastq_filename.string(), std::ios_base::out);
-//     }
-//     out.push(fastq_out);
-//     std::ostream out_stream(&out);
-//     return ou_stream&
-// }
-
-// std::istream& get_istream_fastq(std::string fastq)
-// {
-//     boost::filesystem::path fastq_path = boost::filesystem::canonical(fastq);
-//     boost::filesystem::path fastq_filename = fastq_path.filename();
-//     std::string fastq_extention = boost::filesystem::extension(fastq_filename.string());
-
-//     std::ifstream fastq_in;
-//     boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-
-//     if (fastq_extention == ".gz") {
-//         fastq_in.open(fastq, std::ios_base::in | std::ios_base::binary);
-//         in.push(boost::iostreams::gzip_decompressor());
-//     }
-//     else if (fastq_extention == ".bz2") {
-//         fastq_in.open(fastq, std::ios_base::in | std::ios_base::binary);
-//         in.push(boost::iostreams::bzip2_decompressor());
-//     }
-//     else if (fastq_extention == ".z" || fastq_extention == ".Z") {
-//         fastq_in.open(fastq, std::ios_base::in | std::ios_base::binary);
-//         in.push(boost::iostreams::zlib_decompressor());
-//     } else {
-//         fastq_in.open(fastq, std::ios_base::in);
-//     }
-//     in.push(fastq_in);
-//     std::istream in_stream(&in);
-//     return in_stream;
-// }
-
 int run_pe(cxxopts::ParseResult parseresult)
 {
     std::string fastq1_string = parseresult["fastq"].as<std::string>();
