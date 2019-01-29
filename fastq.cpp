@@ -135,10 +135,10 @@ void write_fastq(std::vector<std::string> fastq_vector, std::set<int> filtered_s
 //     return in_stream;
 // }
 
-int run_pe(cxxopts::ParseResult result)
+int run_pe(cxxopts::ParseResult parseresult)
 {
-    std::string fastq1_string = result["fastq"].as<std::string>();
-    std::string fastq2_string = result["fastq2"].as<std::string>();
+    std::string fastq1_string = parseresult["fastq"].as<std::string>();
+    std::string fastq2_string = parseresult["fastq2"].as<std::string>();
 
     //in fastq1
     boost::filesystem::path fastq1_path = boost::filesystem::canonical(fastq1_string);
@@ -236,7 +236,7 @@ int run_pe(cxxopts::ParseResult result)
     unsigned long long int kept_read_pairs = 0;
     unsigned long long int total_read_pairs = 0;
     int loop_count = 1;
-    unsigned long long int reads_in_memory = result["reads_in_memory"].as<unsigned long long int>();
+    unsigned long long int reads_in_memory = parseresult["reads_in_memory"].as<unsigned long long int>();
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
         loop_count++;
@@ -299,9 +299,9 @@ int run_pe(cxxopts::ParseResult result)
     return 0;
 }
 
-int run_se(cxxopts::ParseResult result)
+int run_se(cxxopts::ParseResult parseresult)
 {
-    std::string fastq1_string = result["fastq"].as<std::string>();
+    std::string fastq1_string = parseresult["fastq"].as<std::string>();
     //fastq1
     boost::filesystem::path fastq1_path = boost::filesystem::canonical(fastq1_string);
     boost::filesystem::path fastq1_filename = fastq1_path.filename();
@@ -352,7 +352,7 @@ int run_se(cxxopts::ParseResult result)
     unsigned long long int kept_read_singletons = 0;
     unsigned long long int total_read_singletons = 0;
     int loop_count = 1;
-    unsigned long long int reads_in_memory = result["reads_in_memory"].as<unsigned long long int>();
+    unsigned long long int reads_in_memory = parseresult["reads_in_memory"].as<unsigned long long int>();
     while(true) {
         std::cout << "loop: " << loop_count << std::endl;
         loop_count++;
@@ -400,20 +400,20 @@ int run_se(cxxopts::ParseResult result)
     return 0;
 }
 
-bool get_input_paths_valid(cxxopts::ParseResult result)
+bool get_input_paths_valid(cxxopts::ParseResult parseresult)
 {
     using namespace boost::filesystem;
     path cwd = current_path();
 
     // fastq
-    bool fastq_exists = exists(result["fastq"].as<std::string>());
+    bool fastq_exists = exists(parseresult["fastq"].as<std::string>());
     if (!fastq_exists) {
         std::cerr << "input fastq does not exist at specified path:\n\t"
-                  << result["fastq"].as<std::string>() << std::endl;
+                  << parseresult["fastq"].as<std::string>() << std::endl;
         return false;
     }
 
-    path fastq_path = system_complete(result["fastq"].as<std::string>());
+    path fastq_path = system_complete(parseresult["fastq"].as<std::string>());
     if (equivalent(fastq_path.parent_path(), cwd)) {
         std::cerr << "input fastq should not be located in cwd\n"
                   << "\tcwd: " << cwd
@@ -422,15 +422,15 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
     }
 
     // fastq2
-    if (result.count("fastq2")) {
-        bool fastq2_exists = exists(result["fastq2"].as<std::string>());
+    if (parseresult.count("fastq2")) {
+        bool fastq2_exists = exists(parseresult["fastq2"].as<std::string>());
         if (!fastq2_exists) {
             std::cerr << "input fastq2 does not exist at specified path:\n\t"
-                      << result["fastq2"].as<std::string>() << std::endl;
+                      << parseresult["fastq2"].as<std::string>() << std::endl;
             return false;
         }
 
-        path fastq2_path = system_complete(result["fastq2"].as<std::string>());
+        path fastq2_path = system_complete(parseresult["fastq2"].as<std::string>());
         if (equivalent(fastq2_path.parent_path(), cwd)) {
             std::cerr << "input fastq2 should not be located in cwd\n"
                       << "\tcwd: " << cwd
@@ -441,23 +441,23 @@ bool get_input_paths_valid(cxxopts::ParseResult result)
     return true;
 }
 
-bool get_options_valid(cxxopts::ParseResult result)
+bool get_options_valid(cxxopts::ParseResult parseresult)
 {
-    if (result.count("fastq") != 1) {
+    if (parseresult.count("fastq") != 1) {
         std::cerr << "--fastq option must be specified once" << std::endl;
         return false;
     }
-    if (result.count("fastq2")) {
-        if (result.count("fastq2") != 1) {
+    if (parseresult.count("fastq2")) {
+        if (parseresult.count("fastq2") != 1) {
             std::cerr << "--fastq2 option can only be specified once" << std::endl;
             return false;
         }
     }
-    bool input_paths_valid = get_input_paths_valid(result);
+    bool input_paths_valid = get_input_paths_valid(parseresult);
     if (!input_paths_valid) {
         return false;
     }
-    if (result.count("reads_in_memory") != 1) {
+    if (parseresult.count("reads_in_memory") != 1) {
         std::cerr << "--reads_in_memory must be specified once" << std::endl;
         return false;
     }
@@ -472,18 +472,18 @@ int main(int argc, char **argv)
       ("fastq2", "second of pair (optional)", cxxopts::value<std::string>())
       ("reads_in_memory", "how many read pairs to hold in memory(~250M per 100k reads)", cxxopts::value<unsigned long long int>())
       ;
-    cxxopts::ParseResult result = options.parse(argc, argv);
-    bool options_valid = get_options_valid(result);
+    cxxopts::ParseResult parseresult = options.parse(argc, argv);
+    bool options_valid = get_options_valid(parseresult);
     if (!options_valid) {
         std::cerr << "Please use correct parameters" << std::endl;
         return 1;
     }
 
 
-    if (result.count("fastq2") == 1) {
-        run_pe(result);
+    if (parseresult.count("fastq2") == 1) {
+        run_pe(parseresult);
     } else {
-        run_se(result);
+        run_se(parseresult);
     }
     return 0;
 }
