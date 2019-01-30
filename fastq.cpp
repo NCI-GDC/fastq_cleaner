@@ -45,7 +45,7 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
                                line2+'\n'+
                                line3+'\n'+
                                line4+'\n');
-        if (read_count == reads_in_memory) {
+        if (read_count < reads_in_memory) {
             std::cout << "\t while() read_count == reads_in_memory" << std::endl;
             std::cout << "\t while() read_count == " << read_count << std::endl;
             std::cout << "\t while() reads_in_memory == " << reads_in_memory << std::endl;
