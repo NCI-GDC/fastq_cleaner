@@ -5,6 +5,7 @@
 #include <future>
 #include <set>
 #include <thread>
+#include <stdlib.h>
 
 #include "cxxopts.hpp"
 #include <boost/algorithm/string.hpp>
@@ -228,16 +229,19 @@ int run_pe(cxxopts::ParseResult parseresult)
     std::cout << "wrote output fastq pair" << std::endl;
 
     std::string json_filename = "result.json";
-    std::filebuf fb;
-    fb.open(json_filename, std::ios::out);
-    std::ostream out_json(&fb);
+    std::fstream out_json;
+    out_json.open(json_filename, std::fstream::out);
     out_json << "{\n"
              << "\t\"removed_read_pairs\": " << removed_read_pairs << ",\n"
              << "\t\"kept_read_pairs\": " << kept_read_pairs << ",\n"
              << "\t\"total_read_pairs\": " << total_read_pairs << "\n"
              << "}";
-    out_json.flush();
-    fb.close();
+    int sync_res = out_json.sync();
+    out_json.close();
+    if (out_json.fail()) {
+      std::cout << "failed to close" << json_filename << std:: endl;
+      exit (EXIT_FAILURE);
+    }
 
     return 0;
 }
