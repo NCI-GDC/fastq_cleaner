@@ -17,7 +17,7 @@ RUN dnf update --refresh --best --allowerasing -y \
     && rm -rf fastq_cleaner \
     && dnf clean all \
     && dnf remove -y \
-        boost-devel
+        boost-devel \
         gcc-c++ \
         git \
         make \
