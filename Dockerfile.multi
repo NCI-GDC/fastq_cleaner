@@ -4,7 +4,6 @@ ARG BUILDER_TAG=3.1.0
 ### Download tarball to scratch layer
 FROM scratch AS src
 ARG VERSION
-ADD https://path/to/file/$VERSION/software-$VERSION.tar.gz /software.tar.gz
 
 FROM ${REPOSITORY}/ncigdc/amzn2023-builder:${BUILDER_TAG} AS builder
 
