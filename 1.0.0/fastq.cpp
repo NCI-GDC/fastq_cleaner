@@ -19,7 +19,7 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
 {
     std::set<int> filtered_set;
     std::vector<std::string> fastq_vector;
-    
+
     std::string line1;
     std::string line2;
     std::string line3;
@@ -32,7 +32,7 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
         std::getline(in_stream, line3);
         std::getline(in_stream, line4);
 
-        std::vector<std::string> name_vector;            
+        std::vector<std::string> name_vector;
         boost::split(name_vector, line1, [](char c){return c == ' ';});
 
         if (name_vector.size() == 2) {
@@ -62,7 +62,7 @@ std::pair<std::set<int>, std::vector<std::string>> get_fastq_pair(std::istream& 
 
 void write_fastq(std::vector<std::string> fastq_vector, std::set<int> filtered_set, std::ostream& out_stream)
 {
-    
+
     int current_index = 0;
     for(std::vector<std::string>::iterator it = fastq_vector.begin(); it != fastq_vector.end(); ++it) {
         std::set<int>::const_iterator iit = filtered_set.find(current_index);
@@ -154,7 +154,7 @@ int run_pe(cxxopts::ParseResult parseresult)
     }
     out1.push(fastq1_out);
     std::ostream out1_stream(&out1);
-    
+
     //out fastq2
     std::ofstream fastq2_out;
     boost::iostreams::filtering_streambuf<boost::iostreams::output> out2;
@@ -190,7 +190,7 @@ int run_pe(cxxopts::ParseResult parseresult)
         std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq1_pair = task_get_fastq1_pair.get_future();
         std::future<std::pair<std::set<int>, std::vector<std::string>>> fut_fastq2_pair = task_get_fastq2_pair.get_future();
 
-        std::thread worker1_thread(std::move(task_get_fastq1_pair), std::ref(in_stream1), reads_in_memory);        
+        std::thread worker1_thread(std::move(task_get_fastq1_pair), std::ref(in_stream1), reads_in_memory);
         std::thread worker2_thread(std::move(task_get_fastq2_pair), std::ref(in_stream2), reads_in_memory);
 
         std::pair<std::set<int>, std::vector<std::string>> pair1 = fut_fastq1_pair.get();
@@ -329,11 +329,11 @@ int run_se(cxxopts::ParseResult parseresult)
             break;
         }
     }
-    
+
     boost::iostreams::close(in1);
     out1_stream.flush();
     boost::iostreams::close(out1);
-    
+
     std::cout << "wrote output fastq singleton" << std::endl;
 
     std::string json_filename = "result.json";
