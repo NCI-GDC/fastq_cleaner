@@ -24,8 +24,8 @@ EOF
 ### Run install steps
 WORKDIR /fastq_cleaner/${VERSION}
 
-RUN make << EOF
-mv fastq_cleaner /usr/local/bin/
+RUN make <<EOF
+cp -r fastq_cleaner /usr/local/bin/
 dnf clean all
 dnf remove -y \
   boost-devel \
