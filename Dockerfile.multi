@@ -26,7 +26,9 @@ EOF
 ### Run install steps
 WORKDIR /fastq_cleaner/${VERSION}
 
-RUN make <<EOF
+RUN pwd
+cd /fastq_cleaner/${VERSION}
+make
 cp -r fastq_cleaner /usr/local/bin/
 dnf clean all
 dnf remove -y \
