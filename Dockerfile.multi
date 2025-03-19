@@ -26,7 +26,7 @@ EOF
 ### Run install steps
 WORKDIR /fastq_cleaner/${VERSION}
 
-RUN pwd
+RUN pwd <<EOF
 cd /fastq_cleaner/${VERSION}
 make
 cp -r fastq_cleaner /usr/local/bin/
