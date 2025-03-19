@@ -19,15 +19,12 @@ dnf --assumeyes install \
   git \
   make
 git clone https://github.com/NCI-GDC/fastq_cleaner.git
-pwd
-ls -al
 EOF
 
 ### Run install steps
 WORKDIR /fastq_cleaner/${VERSION}
 
-RUN pwd <<EOF
-cd /fastq_cleaner/${VERSION}
+RUN cd /fastq_cleaner/${VERSION} <<EOF
 make
 cp -r fastq_cleaner /usr/local/bin/
 dnf clean all
