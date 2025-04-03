@@ -20,12 +20,14 @@ dnf --assumeyes install \
   make
 EOF
 
-COPY ./ /fastq_cleaner
+COPY . /fastq_cleaner
 
 ### Run install steps
 WORKDIR /fastq_cleaner/${VERSION}
 
 RUN <<EOF
+pwd
+ls -al
 make
 cp -r fastq_cleaner /usr/local/bin/
 dnf clean all
