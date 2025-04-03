@@ -40,5 +40,3 @@ EOF
 #FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
 
 #COPY --from=builder /usr/local /usr/local
-
-ENTRYPOINT ["/usr/local/bin/fastq_cleaner"]
