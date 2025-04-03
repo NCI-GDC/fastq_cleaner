@@ -21,11 +21,9 @@ EOF
 COPY . /fastq_cleaner
 
 ### Run install steps
-WORKDIR /fastq_cleaner/${VERSION}
+WORKDIR /fastq_cleaner
 
 RUN <<EOF
-pwd
-ls -al /fastq_cleaner
 make
 cp -r fastq_cleaner /usr/local/bin/
 dnf clean all
