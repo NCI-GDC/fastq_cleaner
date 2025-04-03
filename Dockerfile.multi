@@ -34,7 +34,7 @@ COPY --from=builder /usr/local/bin/fastq_cleaner /usr/local/bin/fastq_cleaner
 RUN <<EOF
 dnf clean all
 dnf remove -y \
-  boost-devel \
+  boost \
   gcc-c++ \
   git \
   make
