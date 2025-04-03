@@ -1,13 +1,45 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
 
 # C extensions
 *.so
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+#testing
+fastq
+*.fastq
 
 # Distribution / packaging
-.Python
 env/
 build/
 develop-eggs/
@@ -31,10 +63,6 @@ _version.py
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -68,12 +96,6 @@ docs/_build/
 # PyBuilder
 target/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
 # celery beat schedule file
 celerybeat-schedule
 
@@ -101,9 +123,6 @@ ENV/
 
 # mkdocs documentation
 /site
-
-# mypy
-.mypy_cache/
 
 # VSCode
 .vscode/
