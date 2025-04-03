@@ -7,8 +7,6 @@ ARG VERSION
 
 FROM ${REPOSITORY}/ncigdc/amzn2023-builder:${BUILDER_TAG} AS builder
 
-ARG VERSION
-
 ### Mount tarball from scratch layer and untar into builder layer
 RUN --mount=from=src,target=/src <<EOF
 dnf update --refresh --best --allowerasing -y
@@ -27,7 +25,7 @@ WORKDIR /fastq_cleaner/${VERSION}
 
 RUN <<EOF
 pwd
-ls -al
+ls -al /fastq_cleaner
 make
 cp -r fastq_cleaner /usr/local/bin/
 dnf clean all
