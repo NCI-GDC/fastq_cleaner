@@ -26,9 +26,15 @@ WORKDIR /fastq_cleaner
 RUN <<EOF
 make
 cp -r fastq_cleaner /usr/local/bin/
+EOF
+
+FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
+COPY --from=builder /usr/local/bin/fastq_cleaner /usr/local/bin/fastq_cleaner
+
+RUN <<EOF
 dnf clean all
 dnf remove -y \
-  boost-devel \
+  boost \
   gcc-c++ \
   git \
   make
