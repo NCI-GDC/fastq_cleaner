@@ -23,12 +23,9 @@ COPY . /fastq_cleaner
 ### Run install steps
 WORKDIR /fastq_cleaner
 
-RUN make <<EOF
-cp ./fastq_cleaner /usr/local/bin/.
-pwd
-ls -al /fastq_cleaner
-ls -al /usr/local/bin
-EOF
+RUN make
+
+COPY fastq_cleaner /usr/local/bin/
 
 ### Multi-stage build:
 #FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
