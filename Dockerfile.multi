@@ -9,7 +9,7 @@ FROM ${REPOSITORY}/ncigdc/amzn2023-builder:${BUILDER_TAG} AS builder
 
 ### Mount tarball from scratch layer and untar into builder layer
 RUN --mount=from=src,target=/src <<EOF
-dnf update --refresh --best --allowerasing -y
+dnf update --refresh --best -y
 dnf --assumeyes install \
   boost \
   boost-devel \
@@ -25,6 +25,7 @@ WORKDIR /fastq_cleaner
 
 RUN make
 
+COPY /fastq_cleaner /usr/local/bin/fastq_cleaner
 ### Multi-stage build:
 #FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
 
