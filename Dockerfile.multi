@@ -24,6 +24,7 @@ COPY . /fastq_cleaner
 WORKDIR /fastq_cleaner
 
 RUN make <<EOF
+cp ./fastq_cleaner /usr/local/bin/.
 pwd
 ls -al /fastq_cleaner
 ls -al /usr/local/bin
