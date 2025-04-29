@@ -25,7 +25,9 @@ WORKDIR /fastq_cleaner
 
 RUN make
 
-COPY /fastq_cleaner/fastq_cleaner /usr/local/bin/fastq_cleaner
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /fastq_cleaner/fastq_cleaner /usr/local/bin/fastq_cleaner
+
 ### Multi-stage build:
 #FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
 
