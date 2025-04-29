@@ -20,6 +20,11 @@ EOF
 
 COPY . /fastq_cleaner
 
+FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
+
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /fastq_cleaner /fastq_cleaner
+
 ### Run install steps
 WORKDIR /fastq_cleaner
 
