@@ -9,7 +9,7 @@ FROM ${REPOSITORY}/ncigdc/amzn2023-builder:${BUILDER_TAG} AS builder
 
 ### Mount tarball from scratch layer and untar into builder layer
 RUN --mount=from=src,target=/src <<EOF
-dnf update --refresh --best --allowerasing -y
+dnf update --refresh --best -y
 dnf --assumeyes install \
   boost \
   boost-devel \
@@ -23,23 +23,7 @@ COPY . /fastq_cleaner
 ### Run install steps
 WORKDIR /fastq_cleaner
 
-RUN <<EOF
-make
-cp -r fastq_cleaner /usr/local/bin/
-EOF
-
-FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
-COPY --from=builder /usr/local/bin/fastq_cleaner /usr/local/bin/fastq_cleaner
-
-RUN <<EOF
-dnf clean all
-dnf remove -y \
-  boost \
-  gcc-c++ \
-  git \
-  make
-rm -rf /tmp/* /var/tmp/*
-EOF
+RUN make
 
 ### Multi-stage build:
 #FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
