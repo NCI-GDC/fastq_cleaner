@@ -28,7 +28,10 @@ COPY --from=builder /fastq_cleaner /fastq_cleaner
 ### Run install steps
 WORKDIR /fastq_cleaner
 
-RUN make
+RUN make <<EOF
+pwd
+ls -al /fastq_cleaner
+ls -al /usr/local/bin
 
 COPY /fastq_cleaner/fastq_cleaner /usr/local/bin/fastq_cleaner
 ### Multi-stage build:
