@@ -23,23 +23,10 @@ COPY . /fastq_cleaner
 ### Run install steps
 WORKDIR /fastq_cleaner
 
-RUN <<EOF
-make
-cp -r fastq_cleaner /usr/local/bin/
-EOF
+RUN make
 
 FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
-COPY --from=builder /usr/local/bin/fastq_cleaner /usr/local/bin/fastq_cleaner
-
-RUN <<EOF
-dnf clean all
-dnf remove -y \
-  boost \
-  gcc-c++ \
-  git \
-  make
-rm -rf /tmp/* /var/tmp/*
-EOF
+COPY --from=builder /fastq_cleaner/fastq_cleaner /usr/local/bin/fastq_cleaner
 
 ### Multi-stage build:
 #FROM ${REPOSITORY}/ncigdc/amzn2023:${BUILDER_TAG}
