@@ -10,7 +10,6 @@ include:
   - component: $CI_SERVER_FQDN/nci-gdc/gitlab-templates/docker-build@1.6.1
     inputs:
       image_version: "4"
-      dockerfile: "Dockerfile.multi"
 
   - component: $CI_SERVER_FQDN/nci-gdc/gitlab-templates/docker-release@1.6.1
 
